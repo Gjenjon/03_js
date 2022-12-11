@@ -1,0 +1,148 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+nav ul a,
+nav .brand-logo {
+  color: #444;
+}
+
+p {
+  line-height: 2rem;
+}
+
+.sidenav-trigger {
+  color: #26a69a;
+}
+
+.parallax-container {
+  min-height: 380px;
+  line-height: 0;
+  height: auto;
+  color: rgba(255,255,255,.9);
+}
+  .parallax-container .section {
+    width: 100%;
+  }
+
+@media only screen and (max-width : 992px) {
+  .parallax-container .section {
+    position: absolute;
+    top: 40%;
+  }
+  #index-banner .section {
+    top: 10%;
+  }
+}
+
+@media only screen and (max-width : 600px) {
+  #index-banner .section {
+    top: 0;
+  }
+}
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+  font-size: inherit;
+}
+
+footer.page-footer {
+  margin: 0;
+}
+
+/* login */
+.inputbox{
+  margin-left: auto;
+  margin-right: auto;
+  width: 30%;
+}
+
+.card-content{
+  text-align: center;
+}
+
+#new{
+  color: #26a69a;
+  font: bold;
+}
+
+#first_name{
+  margin-left : auto;
+  margin-right: auto;
+}
+
+
+
+/* nav */
+  /* room selector */
+  .roomSelectorContainerP{
+    text-align: right;
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .input-field{
+    margin-right: 2%;
+    margin-left: auto;
+    width: 10%;
+    /* display: block; */
+  }
+
+
+/* dialogue containe */
+#dialogue{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+  /* display posts */
+    .otherPostContainer{
+      display: flex;
+      padding: 5px;
+      margin-right: auto;
+      margin-left: 10%;
+      width: 50%;
+      border: solid 1px;
+    }
+
+    #otherMsgContainer{
+      border: solid 1px blue;
+      padding: 5px;
+    }
+
+    .otherIconContainer{
+      border: solid 1px blue;
+      padding: 5px;
+    }
+
+    .myPostContainer{
+      display: flex;
+      border: solid #26a69a 1px;
+      padding: 5px;
+      margin-right: 10%;
+      margin-left: auto;
+      width: 50%;
+    }
+
+    #myMsgContainer{
+      border: solid 1px blue;
+      padding: 5px;
+      margin-right: 0;
+      margin-left: auto;
+
+    }
+
+    .myIconContainer{
+      border: solid 1px blue;
+      padding: 5px;
+    }
+  
+

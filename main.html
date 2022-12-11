@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chatアプリ</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    </head>
+
+    <header>
+        <nav class="#37474f blue-grey darken-3" role="navigation">
+            <div class="nav-wrapper container">
+              <a id="logo-container" href="#" class="brand-logo">Logo</a>
+              <ul class="right hide-on-med-and-down">
+                <li><a href="#"></a></li>
+                <li><a id="user"></a></li>
+              </ul>
+        
+              <ul id="nav-mobile" class="sidenav">
+                <li><a href="#">Navbar Link</a></li>
+              </ul>
+
+
+              <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+              <!-- <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a> -->
+
+              
+            </div>
+          </nav>
+
+    </header>
+
+    <body>
+        <!-- 要求機能 -->
+            <!-- 必須 -->
+                <!-- チャットの投稿（アカウント、本文、画像、位置情報、投稿ボタン）/ 投稿div
+                チャットの修正削除（削除ボタンの表示、アラート）/ 個々の投稿div
+                チャットの表示 （アカウント、本文、画像、位置情報、修正削除、スクロール） / チャット表示div -->
+
+            <!-- オプション -->
+                <!-- チャット検索（検索） / 検索div
+                アカウント作成（登録、修正、削除) / 前html  -->
+                <!-- 辞書ロボット -->
+
+            <!-- データベース -->
+                <!-- account ー usr1  - chat history  - (chat ID, room No, date, text)
+                                                      -  
+                                 - user information
+                                    - user icon
+                                    - name 
+                                    - gender
+                                    - ...
+                                 - image * has chat ID
+                                 - location * has chat ID                        
+                        ー usr2
+                
+                chat series - room1 - (chat ID)  ※ブロックチェーン 
+                            - room2 -->
+
+                <!-- ワイヤーフレーム -->
+                    <!-- ログイン画面   -> 新規登録
+                                 -> チャット画面 -->
+
+        <div class="roomSelectorContainer">
+            
+              <div class="input-field" id="inputField">
+
+                    <select name="roomName" id="roomName">
+                        <option value="room1"><a href="#">room1</a></option>
+                        <option value="room2"><a href="#">room2</a></option>
+                        <option value="room3"><a href="#">room3</a></option>
+                    </select>
+                <label>Room</label>
+              </div>
+        </div>
+
+        <div  id="chatContainer">
+            <div class="searchContainer">
+
+            </div>
+
+            <div class="#e0f2f1 teal lighten-5" id="dialogue">
+  
+
+            
+            </div>
+
+            <div class="postContainer">
+                <textarea id="text" cols="30" rows="10"></textarea>
+                <button id="send">送信</button>
+
+            </div>
+
+        </div>
+
+
+        <script type="module">
+            // settings            
+                // Import the functions you need from the SDKs you need
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+                // TODO: Add SDKs for Firebase products that you want to use
+                // https://firebase.google.com/docs/web/setup#available-libraries
+                import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, get}
+                    from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.14.0/firebase-database.js";
+
+                // Your web app's Firebase configuration
+                const firebaseConfig = {
+                apiKey: "AIzaSyBQ1NiV3YL1lyYJxmytetuGBhVmdKjiBV4",
+                authDomain: "fir-demo-2cc5d.firebaseapp.com",
+                projectId: "fir-demo-2cc5d",
+                storageBucket: "fir-demo-2cc5d.appspot.com",
+                messagingSenderId: "280359410386",
+                appId: "1:280359410386:web:8f1e2dded8a3d8dba02b0b"
+                };
+
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const db = getDatabase(app); // connect to realtime db
+                const dbAccount = ref(db, "account"); // use chat in realtime db
+                const dbUser = ref(db, `account/${localStorage.getItem("user")}`); // use chat in realtime db
+                const dbRoom = ref(db, "room"); // use chat in realtime db  
+                let dbCurrentRoom = ref(db, "room/room1"); // use chat in realtime db  
+                refresh();
+                // functions
+                    // get date 
+                    function getPostDate(date, format) {
+        
+                        if (!format) {
+                            // デフォルト値
+                            format = 'YYYY/MM/DD hh:mm:ss'
+                        }
+                        
+                        // フォーマット文字列内のキーワードを日付に置換する
+                        format = format.replace(/YYYY/g, date.getFullYear());
+                        format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+                        format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+                        format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
+                        format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+                        format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
+                        
+                        return format;
+                    }
+            // nav
+                //user
+                $("#user").html(localStorage.getItem("user"))
+                
+
+                //room
+                $(document).ready(function(){
+                $('select').formSelect();
+                });
+
+                $('#roomName').change(function() {
+                    alert('Roomを変更しました');
+                    dbCurrentRoom = ref(db, `room/${document.getElementById("roomName").value}`)
+                    console.log(document.getElementById("roomName").value)
+                    $("#dialogue").html("");
+                    refresh();
+
+                });
+
+
+            // search container
+
+
+
+            // dialogue containe
+                // display posts
+                function refresh(){
+                onChildAdded(dbCurrentRoom, function(data){
+                    const msg = data.val();
+                    
+                    // case : my post
+                    if(msg.user == localStorage.getItem("user")){
+                        const h = 
+                        `
+                        <div class="otherPostContainer">
+                            <div class="otherIconContainer">
+                                <img src="">
+                                <p>img</p>
+                            </div>
+
+                            <div class="z-depth-2" id="otherMsgContainer">
+                                <p>${msg.date}<br>${msg.text}</p>        
+                            </div>
+                        </div>
+                        `
+                        $("#dialogue").append(h);
+                    }else{
+                    // case : other posts
+                        const h = 
+                        `
+                        <div class="myPostContainer">
+                            <div class="z-depth-2" id="myMsgContainer">
+                                <p>${msg.date}<br>${msg.text}</p>        
+                            </div>
+
+                            <div class="myIconContainer">
+                                <img src="">
+                                <p>img</p>
+                            </div>
+                        </div>
+                        `
+                        $("#dialogue").append(h);
+                    }
+                });
+
+            }
+            
+
+            
+
+            // postContainer
+                // create chat 
+                $("#send").on("click", function(){
+                    // create post 
+                    const newPost = {
+                        user : localStorage.getItem("user"), // TODO add user name
+                        date : getPostDate(new Date(), 'YYYY/MM/DD hh:mm:ss'), 
+                        room : document.getElementById("roomName").value, // TODO change text to room information
+                        text : $("#text").val(), 
+                    };
+
+                    // remove the case of empyt text box  
+                    if( newPost.text !== ""){
+                        // add room history 
+                        const roomChat = push(dbCurrentRoom); 
+                        set(roomChat, newPost); 
+
+                    };
+                });    
+
+        
+
+                
+
+        </script>
+
+    </body>
+
+
+    <footer>
+
+
+    </footer>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
